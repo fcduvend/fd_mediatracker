@@ -1,11 +1,16 @@
-
 <?PHP
 require_once '../database.php';
 require_once 'rating.php';
+require 'session.php';
+
+$_SESSION['back'] = "fd_listmedia.php";
 
 function renderTable() {
   $pdo = Database::connect();
-  $sql = "SELECT * FROM fd_media INNER JOIN fd_categories ON fd_media.category_id = fd_categories.id ORDER BY fd_media.name";
+  $sql = "SELECT fd_media.logo, fd_media.name, fd_media.id, fd_categories.category_name " .
+         "FROM fd_media " .
+         "INNER JOIN fd_categories ON fd_media.category_id = fd_categories.id " .
+         "ORDER BY fd_media.name";
 
   foreach($pdo->query($sql) as $row) {
     echo "<tr>";
@@ -24,8 +29,12 @@ require 'header.php';
 
 <body>
   <div class="container">
+    
+  <a href="fd_dashboard.php"><?PHP echo $_SESSION['username'];?> Dashboard View</a>
 
     <h1>Media</h1>
+    
+    <a href="fd_createshow.php" class="btn btn-primary">Add Show</a>
 
     <table class="table">
       <tr>
@@ -36,8 +45,6 @@ require 'header.php';
       </tr>
       <?PHP renderTable(); ?>
     </table>
-
-
   </div>
   </body>
 </html>

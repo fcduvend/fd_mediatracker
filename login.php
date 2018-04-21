@@ -14,7 +14,8 @@ if(isset($_POST['txtUser']) && isset($_POST['txtPassword'])) {
   if(!strcmp($data['username'], $_POST['txtUser']) && !strcmp(md5($_POST['txtPassword']), $data['password_hash'])) {
     $_SESSION['username'] = $data['username'];
     $_SESSION['user_id'] = $data['id'];
-    header("location: dashboard.php");
+    $_SESSION['name'] = $data['fname'] . " " . $data['lname'];
+    header("location: fd_dashboard.php");
   }
 }
 

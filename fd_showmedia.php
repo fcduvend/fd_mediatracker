@@ -35,9 +35,9 @@ if($showid != null && strcmp($showid, ""))
 
 if(isset($_POST['rating'])) {
   $postpdo = Database::connect();
-  $postsql = "SELECT * FROM fd_user_favorites WHERE user_id = ?";
+  $postsql = "SELECT * FROM fd_user_favorites WHERE user_id = ? AND media_id = ?";
   $postq = $postpdo->prepare($postsql);
-  $postq->execute(array($_SESSION['user_id']));
+  $postq->execute(array($_SESSION['user_id'], $showid));
   $postdata = $postq->fetch();
 
   if(empty($postdata)) {
@@ -84,7 +84,12 @@ require 'header.php';
       <h3>Description</h3>
       <p><?PHP echo $description;?></p>
 
-      <a href="fd_listmedia.php" class="btn btn-primary">Back</a>
+      <a href="<?PHP
+        if(isset($_SESSION['back']))
+          echo $_SESSION['back'];
+        else
+          echo "fd_list_media.php";
+      ?>" class="btn btn-primary">Back</a>
 
     </div>
   </body>
