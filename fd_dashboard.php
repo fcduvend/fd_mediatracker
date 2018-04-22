@@ -29,6 +29,12 @@ function renderUserRatings() {
   }
 }
 
+function displayAlerts() {
+  if($_SESSION['account_update_flag'] == true) {
+    echo '<br/><br/><div class="alert alert-success" role="alert">Successfully updated account information</div>';
+    $_SESSION['account_update_flag'] = false;
+  }
+}
 
 include 'header.php';
 ?>
@@ -37,7 +43,11 @@ include 'header.php';
   <body>
 
     <div class="container">
+      
       <a href="logout.php" class="btn btn-danger">Logout</a>
+      <a href="fd_update_account.php" class="btn btn-secondary">Update Account</a>
+
+      <?PHP displayAlerts();?>
       
       <h3>Welcome <?PHP echo $user?></h3>
       

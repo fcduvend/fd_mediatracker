@@ -15,6 +15,9 @@ if(isset($_POST['txtUser']) && isset($_POST['txtPassword'])) {
     $_SESSION['username'] = $data['username'];
     $_SESSION['user_id'] = $data['id'];
     $_SESSION['name'] = $data['fname'] . " " . $data['lname'];
+    $_SESSION['fname'] = $data['fname'];
+    $_SESSION['lname'] = $data['lname'];
+
     header("location: fd_dashboard.php");
   }
 }
