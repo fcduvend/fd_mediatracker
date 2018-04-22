@@ -22,9 +22,9 @@ if(isset($_POST) &&
   $q->execute(array($_POST['cboCategory']));
   $catid = $q->fetch()['id'];
 
-  $sql = "INSERT INTO fd_media (name, category_id, description, logo, premier) VALUES (?, ?, ?, ?, ?)";
+  $sql = "INSERT INTO fd_media (name, creator_id, category_id, description, logo, premier) VALUES (?, ?, ?, ?, ?, ?)";
   $q = $pdo->prepare($sql);
-  $q->execute(array($_POST['txtName'], $catid, $_POST['txtDesc'], $content, $_POST['premier']));
+  $q->execute(array($_POST['txtName'], $_SESSION['user_id'], $catid, $_POST['txtDesc'], $content, $_POST['premier']));
 
   header('location: fd_listmedia.php');
 }

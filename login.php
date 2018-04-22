@@ -49,10 +49,9 @@ include 'header.php';
       </table>
       
       <input type="submit" value="Login" class="btn btn-primary"/>
-
+      <a href="register.php" class="btn btn-secondary">Register</a>
     </form>
 
-    <a href="register.php" class="btn btn-secondary">Register</a>
     </div>
 
   </body>
