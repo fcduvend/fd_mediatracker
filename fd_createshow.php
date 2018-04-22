@@ -86,7 +86,7 @@ require 'header.php';
     <tr>
       <td>Description:</td>
       <td>
-        <textarea name="txtDesc" id="txtDesc"></textarea>
+        <textarea name="txtDesc" id="txtDesc" style="width: 75%"></textarea>
       </td>
     </tr>
 

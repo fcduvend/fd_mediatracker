@@ -7,7 +7,11 @@ if(empty($_GET) && empty($_POST))
   header("location: fd_listmedia.php");
 
 $pdo = Database::connect();
-$sql = "SELECT * FROM fd_media INNER JOIN fd_categories ON fd_media.category_id = fd_categories.id WHERE fd_media.id = ?";
+$sql = "SELECT fd_media.*, fd_categories.category_name " .
+       "FROM fd_media " .
+       "INNER JOIN fd_categories ON fd_media.category_id = fd_categories.id " .
+       "WHERE fd_media.id = ?";
+
 $q = $pdo->prepare($sql);
 
 if(empty($_GET) && $_SESSION['showid'] != null && strcmp($_SESSION['showid'], ""))
@@ -21,12 +25,15 @@ else
 $data = $q->fetch();
 
 $showid = $data['id'];
+$creatorid = $data['creator_id'];
 $showname = $data['name'];
 $premier = $data['premier'];
 $description = $data['description'];
 $category = $data['category_name'];
 $logo = "<img style='height: 100px;' src='data:image/jpeg;base64," . base64_encode($data['logo']) . "'>";
 $rating = getRatingForShowId($data['id']);
+
+$_SESSION['creator_id'] = $creatorid;
 
 if($showid != null && strcmp($showid, ""))
 {
@@ -49,6 +56,13 @@ if(isset($_POST['rating'])) {
     $postq = $postpdo->prepare($postsql);
     $postq->execute(array($_POST['rating'], $_SESSION['user_id'], $showid));
   }
+
+}
+
+function addUpdateButton() {
+  if(!strcmp($_SESSION['user_id'], $_SESSION['creator_id'])) {
+    echo '<br/><a href="fd_update_media.php?showid=' . $_SESSION['showid'] . '" class="btn btn-primary">Update</a><br/><br/>';
+  }
 }
 
 require 'header.php';
@@ -56,6 +70,8 @@ require 'header.php';
 
   <body>
     <div class="container">
+      
+      <?PHP addUpdateButton(); ?>    
       
       <h1><?PHP echo $showname;?></h1>
       
@@ -73,7 +89,7 @@ require 'header.php';
         <input type="radio" name="rating" value="4"> 4</input>
         <input type="radio" name="rating" value="5"> 5</input>
         
-        <input type="submit" value="Submit Rating" class="btn btn-primary"/>
+        <input type="submit" value="Submit Rating" class="btn btn-secondary"/>
 
       </form>      
 
