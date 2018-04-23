@@ -12,23 +12,27 @@ $lname_error = "";
 $username_error = "";
 $password_error = "";
 
+//validate first name
 if(isset($_POST['txtFname'])) {
   $fname = $_POST['txtFname'];
   if(!strcmp($fname, ""))
     $fname_error = "First name cannot be blank";
 } 
 
+//validate last name
 if(isset($_POST['txtLname'])) {
   $lname = $_POST['txtLname'];
   if(!strcmp($lname, ""))
     $lname_error = "Last name cannot be blank";
 }
 
+//validate username
 if(isset($_POST['txtUsername'])) {
   $username = $_POST['txtUsername'];
   if(!strcmp($username, ""))
     $username_error = "Username cannot be blank";
 
+  //check if username is already taken
   $pdo = Database::connect();
   $sql = "SELECT * FROM fd_users WHERE username = ? LIMIT 1";
   $q = $pdo->prepare($sql);
@@ -39,15 +43,16 @@ if(isset($_POST['txtUsername'])) {
     $username_error = $username . " is already taken";
 
   Database::disconnect();
-
 }
 
+//validate password
 if(isset($_POST['txtPassword'])) {
   $password = $_POST['txtPassword'];
   if(!strcmp($password, ""))
     $password_error = "Password cannot be blank";
 }
 
+//insert into database
 if(!empty($_POST)) {
   if(!strcmp($fname_error, "") && !strcmp($lname_error, "") && !strcmp($username_error, "") && !strcmp($password_error, "")) {
     $pdo = Database::connect();
@@ -59,12 +64,25 @@ if(!empty($_POST)) {
     header("location: login.php");
   }
 }
-
-
-include 'header.php';
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+      <meta charset="utf-8">
+      <link   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </head>
+
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand mb-0 h1" href="fd_dashboard.php">FMDB</a>
+  </nav>
+
+  <br/>
+
   <body>
+    <div class="container">
     <h1>Register</h1>
     
     <form method="post" action"register.php">
@@ -100,6 +118,7 @@ include 'header.php';
       <a href="login.php" class="btn btn-secondary">Back</a>
 
     </form>
+    </div>
 
   </body>
 </html>

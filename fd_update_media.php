@@ -2,8 +2,8 @@
 require '../database.php';
 require 'session.php';
 
+//get media and category from db
 $pdo = Database::connect();
-
 $sql = "SELECT fd_media.*, fd_categories.category_name " .
        "FROM fd_media " .
        "INNER JOIN fd_categories ON fd_media.category_id = fd_categories.id " .
@@ -14,6 +14,7 @@ $q->execute(array($_GET['showid']));
 $data = $q->fetch();
 $creator_id = $data['creator_id'];
 
+//only allow original creator to update show
 if(strcmp($_SESSION['user_id'], $creator_id)) {
   header('location: fd_listmedia.php');
 }
@@ -28,30 +29,34 @@ $description = $data['description'];
 $logo = $data['logo'];
 $premier = $data['premier'];
 
-
+//has post
 if(!empty($_POST)) {
+  //if valid file upload, update record with logo
   if($_FILES['userfile']['error'] == UPLOAD_ERR_OK &&
     $_FILES['userfile']['size'] > 0 &&
     $_FILES['userfile']['size'] <= 1000000 &&
     $_FILES['userfile']['type'] == "image/jpeg" &&
     !strcmp($_POST['name'], "")) {
 
+    //get file
     $filename = $_FILES['userfile']['name'];
     $tmpname = $_FILES['userfile']['tmp_name'];
-    
     $content = file_get_contents($tmpname);
 
+    //get category id
     $pdo = Database::connect();
     $sql = "SELECT id FROM fd_categories WHERE category_name = ?";
     $q = $pdo->prepare($sql);
     $q->execute(array($_POST['cboCategory']));
     $catid = $q->fetch()['id'];
 
+    //update recor
     $sql = "UPDATE fd_media SET name = ?, category_id = ?, description = ?, logo = ?, premier = ? WHERE id = ?";
     $q = $pdo->prepare($sql);
     $q->execute(array($_POST['txtName'], $catid, $_POST['txtDesc'], $content, $_POST['premier'], $id));
 
   } else {
+    //update record without updating logo
     $pdo = Database::connect();
     $sql = "SELECT id FROM fd_categories WHERE category_name = ?";
     $q = $pdo->prepare($sql);
@@ -66,6 +71,9 @@ if(!empty($_POST)) {
   header('location: fd_showmedia.php?showid=' . $id);
 }
 
+/*
+ * Render combobox with all categories
+ */
 function renderCategories() {
   $pdo = Database::connect();
   $sql = "SELECT * FROM fd_categories";

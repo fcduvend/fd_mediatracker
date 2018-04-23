@@ -5,30 +5,37 @@ require 'session.php';
 $txtNameError = "";
 $logoError = "";
 
+//post with file
 if(isset($_POST) &&
   $_FILES['userfile']['size'] > 0 &&
   $_FILES['userfile']['size'] <= 1000000 &&
   $_FILES['userfile']['type'] == "image/jpeg" &&
   !strcmp($_POST['name'], "")) {
 
+  //get file information and contents
   $filename = $_FILES['userfile']['name'];
   $tmpname = $_FILES['userfile']['tmp_name'];
-  
   $content = file_get_contents($tmpname);
 
+  //get category id from category name
   $pdo = Database::connect();
   $sql = "SELECT id FROM fd_categories WHERE category_name = ?";
   $q = $pdo->prepare($sql);
   $q->execute(array($_POST['cboCategory']));
   $catid = $q->fetch()['id'];
 
+  //create database record
   $sql = "INSERT INTO fd_media (name, creator_id, category_id, description, logo, premier) VALUES (?, ?, ?, ?, ?, ?)";
   $q = $pdo->prepare($sql);
   $q->execute(array($_POST['txtName'], $_SESSION['user_id'], $catid, $_POST['txtDesc'], $content, $_POST['premier']));
 
+  //redirect back to fd_listmedia.php
   header('location: fd_listmedia.php');
 }
 
+/*
+ * Create combobox with all options from db
+ */
 function renderCategories() {
   $pdo = Database::connect();
   $sql = "SELECT * FROM fd_categories";
@@ -43,66 +50,61 @@ require 'header.php';
 ?>
 
 <body>
+  <div class="container">
+    <h1>Add Show</h1>
 
-<div class="container">
+    <form method="post" action="fd_createshow.php" enctype="multipart/form-data">
 
-<h1>Add Show</h1>
+      <table class="table">
+        <tr>
+          <td>Show Name:</td>
+          <td>
+            <input type="text" name="txtName" id="txtName"/>
+          </td>
+        </tr>
 
+        <tr>
+          <td>Premier Date:</td>
+          <td>
+            <input type="date" name="premier"/>
+          </td>
 
-<form method="post" action="fd_createshow.php" enctype="multipart/form-data">
+        </tr>
 
-  <table class="table">
-    <tr>
-      <td>Show Name:</td>
-      <td>
-        <input type="text" name="txtName" id="txtName"/>
-      </td>
-    </tr>
+        <tr>
+          <td>Category:</td>
+          <td>
+            <select name="cboCategory">
+              <?PHP renderCategories();?>
+            </select>
+          </td>
+        </tr>    
 
-    <tr>
-      <td>Premier Date:</td>
-      <td>
-        <input type="date" name="premier"/>
-      </td>
+        <tr>
+          <td>Logo (.jpg):</td>
+          <td>
+            <input name="userfile" type="file" id="userfile" accept=".jpg"/>
+          </td>
+        </tr>
 
-    </tr>
+        <tr>
+          <td>Description:</td>
+          <td>
+            <textarea name="txtDesc" id="txtDesc" style="width: 75%"></textarea>
+          </td>
+        </tr>
 
-    <tr>
-      <td>Category:</td>
-      <td>
-        <select name="cboCategory">
-          <?PHP renderCategories();?>
-        </select>
-      </td>
-    </tr>    
+      <table>
 
-    <tr>
-      <td>Logo (.jpg):</td>
-      <td>
-        <input name="userfile" type="file" id="userfile" accept=".jpg"/>
-      </td>
-    </tr>
+      <input class="btn btn-primary" type="submit" value="Add Show"/>
 
-    <tr>
-      <td>Description:</td>
-      <td>
-        <textarea name="txtDesc" id="txtDesc" style="width: 75%"></textarea>
-      </td>
-    </tr>
+    </form>
 
-  <table>
+    <br/>
+    <br/>
 
-  <input class="btn btn-primary" type="submit" value="Add Show"/>
+    <a href="fd_listmedia.php" class="btn btn-secondary">Back</a>
 
-</form>
-
-<br/>
-<br/>
-
-<a href="fd_listmedia.php" class="btn btn-secondary">Back</a>
-
-</div>
-
-</body>
-
+    </div>
+  </body>
 </html>

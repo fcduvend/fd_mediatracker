@@ -1,6 +1,10 @@
 <?PHP
 require_once '../database.php';
 
+/*
+ * Get string of stars where $numstars represents the number of shaded stars and 5-$numstars represents
+ * the number of unshaded stars
+ */
 function getStars($numstars) {
   if($numstars > 5 || $numstars < 0)
     $numstars = 0;
@@ -16,6 +20,9 @@ function getStars($numstars) {
   return $stars;
 }
 
+/*
+ * Get rating from database and return star string
+ */
 function getRatingForShowId($showid) {
   $pdo = Database::connect();
   $sql = "SELECT * FROM fd_user_favorites WHERE fd_user_favorites.media_id = ?";
